@@ -120,7 +120,7 @@ def filter_recent_days(df, num_days):
     filters dataframe, df, to only include the most recent num_days of trials
     '''
     today = dt.datetime.now()
-    return df[(today.date()-dt.timedelta(days=7)):today]
+    return df[(today.date()-dt.timedelta(days=num_days)):today]
 
 def extract_filename(data_to_analyze, target='stim_name', inplace=True):
     if not inplace:
