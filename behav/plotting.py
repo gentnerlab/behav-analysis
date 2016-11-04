@@ -56,18 +56,15 @@ def plot_performance_calendar(subj, data_to_analyze, disp_counts=False, vmins=(0
     cmaps = [plt.get_cmap(cmap) for cmap in ('Oranges', 'RdYlBu', 'BuGn')]
     for cmap in cmaps:
         cmap.set_bad(color='Grey')
-
+    
+    pivoted = aggregated.pivot('hour', 'date')
+    
     for i, (column, title, cmap, vmin, vmax) in enumerate(zip(columns, titles, cmaps, vmins, vmaxs)):
-        pivoted = aggregated.pivot('hour', 'date', column)
-        g = sns.heatmap(pivoted, annot=disp_counts, ax=ax[i], 
+        g = sns.heatmap(pivoted[column], annot=disp_counts, ax=ax[i], 
                         cmap=cmap, cbar=not disp_counts,
                         vmin=vmin, vmax=vmax)
         g.set_title(title)
-
-    months = np.array([mdt.month for mdt in pivoted.keys().values])
-    months_idx = np.append([True] , months[:-1] != months[1:])
-    strfs = np.array(['%d', '%b %d'])[months_idx.astype(int)]
-    g.set_xticklabels([dt.strftime(strf) for dt, strf in zip(pivoted.keys().values, strfs)]);
+    g.set_xticklabels(_date_labels(pivoted.keys().levels[1]));
 
 
 def plot_filtered_accperstim(title,df,num_days=7, **kwargs):
