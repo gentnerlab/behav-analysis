@@ -121,3 +121,10 @@ def filter_recent_days(df, num_days):
     '''
     today = dt.datetime.now()
     return df[(today.date()-dt.timedelta(days=7)):today]
+
+def extract_filename(data_to_analyze, target='stim_name', inplace=True):
+    if not inplace:
+        data_to_analyze = data_to_analyze.copy()
+    split_names = data_to_analyze.stimulus.str.split('/', expand=True)
+    data_to_analyze[target] = split_names[split_names.keys().values.max()].str.split('.', expand=True)[0]
+    return data_to_analyze
