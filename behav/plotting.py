@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 import utils
+import scipy as sp
+from scipy import ndimage
 
 def plot_stars(p,x,y,size='large',horizontalalignment='center',**kwargs):
     ''' Plots significance stars '''
@@ -115,3 +117,50 @@ def plot_accperstim(title, data_to_analyze, stim_ids='stimulus', stims_all=None,
                     xticklabels=_date_labels(pivoted.keys().values),
                     yticklabels=yticklabels)
     g.set_title(title)
+
+def plot_daily_accuracy(subj, df, x_axis='time', smoothing=None):
+    '''
+    plots the accuracy of the subject throughout the day.
+    
+    Parameters:
+    -----------
+    subj : str
+        the subject
+    df : pandas DataFrame
+        data frame of behavior data
+    x_axis : str
+        whether to plot 'time' or 'trial_num' along the x axis
+    smoothing : str or None
+        whether to smooth using 'exponential', 'rolling' average, 
+        'gaussian' filter', 'none', or None to pick exponential or gaussian
+    '''
+    fig = plt.figure(figsize=(16, 2)) 
+    filtered_data = utils.filter_normal_trials(utils.filter_recent_days(df, 0))
+    if x_axis == 'time':
+        x = filtered_data.index._mpl_repr()
+        use_index=True
+        if not smoothing:
+            smoothing = 'exponential'
+    elif x_axis == 'trial_num':
+        x = np.arange(len(filtered_data))
+        use_index=False
+        if not smoothing:
+            smoothing = 'gaussian'
+    else:
+        raise Exception('invalid value for x_axis')
+    
+    g = filtered_data['correct'].plot(color='r', marker='o', use_index=use_index)
+    plt.fill_between(x, .5, filtered_data['correct'].values.astype(bool), color = 'r', alpha = .25)
+    if smoothing == 'exponential':
+        filtered_data['correct'].ewm(halflife=20).mean().plot(use_index=use_index, linewidth = 3)
+    elif smoothing == 'rolling':
+        filtered_data['correct'].rolling(window=10, center=True).mean().plot(color='k', linewidth = 3, use_index=use_index)
+    elif smoothing == 'gaussian':
+        plt.plot(x, sp.ndimage.filters.gaussian_filter(filtered_data['correct'].values.astype('float32'), 3, order=0), linewidth = 3)
+    elif smoothing != 'none':
+        raise Exception('invalid value for smoothing')
+    
+    plt.axhline(y=.5, c='black', linestyle='dotted')
+    plt.title('Today\'s Performance: '+subj)
+    plt.xlabel(x_axis)
+    return
