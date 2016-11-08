@@ -118,9 +118,10 @@ def plot_accperstim(title, data_to_analyze, stim_ids='stimulus', stims_all=None,
                     yticklabels=yticklabels)
     g.set_title(title)
 
-def plot_daily_accuracy(subj, df, x_axis='time', smoothing=None):
+def plot_daily_accuracy(subj, df, x_axis='trial_num', smoothing='gaussian', day_lim=0):
     '''
     plots the accuracy of the subject throughout the day.
+    a preset for the more general plot_accuracy_bias
     
     Parameters:
     -----------
@@ -130,37 +131,112 @@ def plot_daily_accuracy(subj, df, x_axis='time', smoothing=None):
         data frame of behavior data
     x_axis : str
         whether to plot 'time' or 'trial_num' along the x axis
-    smoothing : str or None
+    smoothing : str
         whether to smooth using 'exponential', 'rolling' average, 
-        'gaussian' filter', 'none', or None to pick exponential or gaussian
+        'gaussian' filter'
+    day_lim : None or non-negative int
+        max number of days of trials to include. Zero means just today.
+    '''
+    plot_accuracy_bias(subj, df, x_axis=x_axis, smoothing=smoothing, trial_lim=None, day_lim=day_lim, 
+                        plt_correct_smoothed=True, plt_correct_shade=True, plt_correct_line=True, 
+                        plt_L_response_smoothed=False, plt_L_response_shade=False, plt_L_response_line=False,
+                        plt_R_response_smoothed=False, plt_R_response_shade=False, plt_R_response_line=False,
+                        plt_ci=False, block_size=100)
+
+def plot_ci_accuracy(subj, df, x_axis='time', day_lim=7, trial_lim=None, bias=True):
+    '''
+    plots the accuracy (and bias) of the subject throughout the day.
+    a preset for the more general plot_accuracy_bias
+    
+    Parameters:
+    -----------
+    subj : str
+        the subject
+    df : pandas DataFrame
+        data frame of behavior data
+    x_axis : str
+        whether to plot 'time' or 'trial_num' along the x axis
+    trial_lim : None or int
+        max number of most recent trials to include
+    day_lim : None or non-negative int
+        max number of days of trials to include. Zero means just today.
+    bias : boolean
+        whether to plot the line for the left bias
+    '''
+    plot_accuracy_bias(subj, df, x_axis=x_axis, smoothing='rolling', trial_lim=None, day_lim=day_lim,
+                        plt_correct_smoothed=True, plt_correct_shade=False, plt_correct_line=False, 
+                        plt_L_response_smoothed=bias, plt_L_response_shade=False, plt_L_response_line=False,
+                        plt_R_response_smoothed=False, plt_R_response_shade=False, plt_R_response_line=False,
+                        plt_ci=True, block_size=100)
+
+def plot_accuracy_bias(subj, df, x_axis='time', smoothing='exponential', trial_lim=None, day_lim=7, 
+                        plt_correct_smoothed=True, plt_correct_shade=True, plt_correct_line=True, 
+                        plt_L_response_smoothed=False, plt_L_response_shade=False, plt_L_response_line=False,
+                        plt_R_response_smoothed=False, plt_R_response_shade=False, plt_R_response_line=False,
+                        plt_ci=False, block_size=100):
+    '''
+    plots the accuracy or bias of the subject.
+    
+    Parameters:
+    -----------
+    subj : str
+        the subject
+    df : pandas DataFrame
+        data frame of behavior data
+    x_axis : str
+        whether to plot 'time' or 'trial_num' along the x axis
+    smoothing : str
+        whether to smooth using 'exponential', 'rolling' average, 
+        'gaussian' filter'
+    trial_lim : None or int
+        max number of most recent trials to include
+    day_lim : None or non-negative int
+        max number of days of trials to include. Zero means just today.
+    plt_{correct, L_response, R_response}_smoothed : boolean
+        whether to plot a smoothed line for the value
+    plt_{correct, L_response, R_response}_shade : boolean
+        whether to plot a red shaded region filling in the line of actual responses
+    plt_{correct, L_response, R_response}_line : boolean
+        whether to plot a red line of the actual responses
     '''
     fig = plt.figure(figsize=(16, 2)) 
-    filtered_data = utils.filter_normal_trials(utils.filter_recent_days(df, 0))
+    if trial_lim is not None:
+        df = df[-trial_lim:]
+    if day_lim is not None:
+        df = utils.filter_recent_days(df, day_lim)
+    df = utils.filter_normal_trials(df)
     if x_axis == 'time':
-        x = filtered_data.index._mpl_repr()
+        x = df.index._mpl_repr()
         use_index=True
-        if not smoothing:
-            smoothing = 'exponential'
     elif x_axis == 'trial_num':
-        x = np.arange(len(filtered_data))
+        x = np.arange(len(df))
         use_index=False
-        if not smoothing:
-            smoothing = 'gaussian'
     else:
         raise Exception('invalid value for x_axis')
     
-    g = filtered_data['correct'].plot(color='r', marker='o', use_index=use_index)
-    plt.fill_between(x, .5, filtered_data['correct'].values.astype(bool), color = 'r', alpha = .25)
-    if smoothing == 'exponential':
-        filtered_data['correct'].ewm(halflife=20).mean().plot(use_index=use_index, linewidth = 3)
-    elif smoothing == 'rolling':
-        filtered_data['correct'].rolling(window=10, center=True).mean().plot(color='k', linewidth = 3, use_index=use_index)
-    elif smoothing == 'gaussian':
-        plt.plot(x, sp.ndimage.filters.gaussian_filter(filtered_data['correct'].values.astype('float32'), 3, order=0), linewidth = 3)
-    elif smoothing != 'none':
-        raise Exception('invalid value for smoothing')
+    datas = (df['correct'], df['response']=='L', df['response']=='R')
+    plot_smoothed_mask = (plt_correct_smoothed, plt_L_response_smoothed, plt_R_response_smoothed)
+    plot_shaded_mask = (plt_correct_shade, plt_L_response_shade, plt_R_response_shade)
+    plot_line_mask = (plt_correct_line, plt_L_response_line, plt_R_response_line)
     
+    for data, smoothed, shaded, line in zip(datas, plot_smoothed_mask, plot_shaded_mask, plot_line_mask):
+        if shaded:
+            plt.fill_between(x, .5, data.values.astype(bool), color = 'r', alpha = .25)
+        if line:
+            g = data.plot(color='r', marker='o', linewidth = .5, use_index=use_index)
+        if smoothed:
+            if smoothing == 'exponential':
+                data.ewm(halflife=20).mean().plot(use_index=use_index)
+            elif smoothing == 'gaussian':
+                plt.plot(x, sp.ndimage.filters.gaussian_filter(data.values.astype('float32'), 3, order=0))
+            elif smoothing == 'rolling':
+                data.rolling(window=block_size, center=True).mean().plot(use_index=use_index)
+            else:
+                raise Exception('invalid value for smoothing')
+
+    if plt_ci and smoothing == 'rolling':
+        ci = utils.binomial_ci(0.5*block_size,block_size)
+        plt.axhspan(ci[0],ci[1],color='grey',alpha=0.5)
     plt.axhline(y=.5, c='black', linestyle='dotted')
     plt.title('Today\'s Performance: '+subj)
     plt.xlabel(x_axis)
-    return
