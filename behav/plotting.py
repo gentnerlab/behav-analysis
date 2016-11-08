@@ -240,3 +240,43 @@ def plot_accuracy_bias(subj, df, x_axis='time', smoothing='exponential', trial_l
     plt.axhline(y=.5, c='black', linestyle='dotted')
     plt.title('Today\'s Performance: '+subj)
     plt.xlabel(x_axis)
+
+def plot_trial_feeds(behav_data, num_days=7):
+    '''
+    plots numer of trials and number of feeds for all birds across time
+    
+    Parameters:
+    -----------
+    behav_data : dict of pandas dataframes
+        from loading.load_data_pandas
+    num_days : non-negative int
+        number of days to include data for
+    '''
+    colors = sns.hls_palette(len(behav_data))
+    fig = plt.figure(figsize=(16.0, 4.0))
+    ax1 = fig.gca()
+    ax2 = ax1.twinx()
+
+    for (subj, df), color in zip(behav_data.items(), colors):
+        data_to_analyze = utils.filter_recent_days(df, num_days).copy()
+        if not data_to_analyze.empty:
+            data_to_analyze['date'] = data_to_analyze.index.date
+            blocked = data_to_analyze.groupby('date')
+
+            days = np.sort(blocked.groups.keys())
+            trials_per_day = blocked['response'].count().values
+            line = ax1.plot(days, trials_per_day, label=subj + ' trials per day', c=color)
+            if len(days) == 1:
+                plot(0, trials_per_day[-1], 'o', c=color, ax=ax1)
+
+            aggregated = blocked.agg({'reward': lambda x: np.sum((x==True).astype(float))})
+            aggregated['reward'].plot(ax=ax2, label=subj + ' feeds per day', ls='--', c=color)
+            if len(days) == 1:
+                ax2.plot(0, aggregated['reward'][0], 'o', c=color)
+
+    plt.title('trials and feeds per day')
+    for ax, label, loc in zip((ax1, ax2), ('trials per day', 'feeds per day'), ('upper left', 'upper right')):
+        ax.set_ylabel(label)
+        ax.set_ylim(bottom=0)
+        ax.legend(loc=loc)
+    ax1.set_xticklabels(_date_labels(days))
