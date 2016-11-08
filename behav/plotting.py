@@ -110,7 +110,7 @@ def plot_accperstim(title, data_to_analyze, stim_ids='stimulus', stims_all=None,
         yticklabels = data_to_analyze.groupby(['class_', stim_ids]).index.unique().index.get_level_values(stim_ids).values
     else:
         yticklabels = int(len(pivoted)/label_count_cutoff)
-    cmap = plt.get_cmap('Oranges')
+    cmap = sns.diverging_palette(15, 250, as_cmap=True)
     cmap.set_bad(color = 'k', alpha = 0.5)
     plt.figure()
     g = sns.heatmap(pivoted, vmin=0, vmax=1, cmap=cmap, 
