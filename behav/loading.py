@@ -44,7 +44,7 @@ def load_data_pandas(subjects, data_folder, force_boolean=['reward']):
 
         # if ndege/c operant
         data_files = glob.glob(os.path.join(data_folder,subj,subj[1:]+'_match2sample*.2ac_rDAT'))
-        if data_files:  
+        if data_files:
             fmt = [('session','i4'),
                    ('trial_number','i4'),
                    ('old_type','b'),
@@ -76,7 +76,7 @@ def load_data_pandas(subjects, data_folder, force_boolean=['reward']):
 
         # if ndege/c GONOGO operant
         data_files = glob.glob(os.path.join(data_folder,subj,subj[1:]+'*.gonogo_rDAT'))
-        if data_files:  
+        if data_files:
             fmt = [('session','i4'),
                    ('trial_number','i4'),
                    ('old_type','b'),
@@ -105,10 +105,10 @@ def load_data_pandas(subjects, data_folder, force_boolean=['reward']):
                 df['class_'] = df['old_class'].map(lambda x: ['none', 'GO', 'NOGO'][x])
                 df['data_file'] = data_f
                 df_set.append(df)
-                        
+
         # if AllTrials file from probe-the-broab
         data_files = glob.glob(os.path.join(data_folder,subj,subj+'.AllTrials'))
-        if data_files: 
+        if data_files:
             col_map = {'StimName': 'stimulus',
                        'Epoch': 'session',
                        'StimulusFile': 'block_name',
@@ -162,4 +162,3 @@ def _read_year_rDAT(rDat_f, nheaderrows):
         head = [next(f) for x in range(nheaderrows)]
     date_line = [x for x in head if 'Start time' in x]
     return int(date_line[0][-5:-1])
-

@@ -74,9 +74,7 @@ def plot_performance_calendar(subj, data_to_analyze, disp_counts=False, vmins=(0
                         cmap=cmap, cbar=not disp_counts,
                         vmin=vmin, vmax=vmax)
         g.set_title(title)
-    idk_what_ppl_were_thinking = [x[1] for x in list(pivoted.keys())]
-    g.set_xticklabels(_date_labels(idk_what_ppl_were_thinking))
-    return f
+    g.set_xticklabels(_date_labels(list(pivoted.keys()).levels[1]));
 
 
 def plot_filtered_accperstim(title, df, num_days=7, **kwargs):
@@ -146,7 +144,7 @@ def plot_daily_accuracy(subj, df, x_axis='trial_num', smoothing='gaussian', day_
     x_axis : str
         whether to plot 'time' or 'trial_num' along the x axis
     smoothing : str
-        whether to smooth using 'exponential', 'rolling' average, 
+        whether to smooth using 'exponential', 'rolling' average,
         'gaussian' filter'
     day_lim : None or non-negative int
         max number of days of trials to include. Zero means just today.
@@ -202,7 +200,7 @@ def plot_accuracy_bias(subj, df, x_axis='time', smoothing='exponential', trial_l
     x_axis : str
         whether to plot 'time' or 'trial_num' along the x axis
     smoothing : str
-        whether to smooth using 'exponential', 'rolling' average, 
+        whether to smooth using 'exponential', 'rolling' average,
         'gaussian' filter'
     trial_lim : None or int
         max number of most recent trials to include
