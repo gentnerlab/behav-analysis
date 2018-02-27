@@ -74,7 +74,7 @@ def plot_performance_calendar(subj, data_to_analyze, disp_counts=False, vmins=(0
                         cmap=cmap, cbar=not disp_counts,
                         vmin=vmin, vmax=vmax)
         g.set_title(title)
-    g.set_xticklabels(_date_labels(list(pivoted.keys()).levels[1]));
+    g.set_xticklabels(_date_labels((pivoted.keys()).levels[1]));
 
 
 def plot_filtered_accperstim(title, df, num_days=7, **kwargs):
