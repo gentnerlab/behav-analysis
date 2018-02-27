@@ -75,6 +75,7 @@ def plot_performance_calendar(subj, data_to_analyze, disp_counts=False, vmins=(0
                         vmin=vmin, vmax=vmax)
         g.set_title(title)
     g.set_xticklabels(_date_labels((pivoted.keys()).levels[1]));
+    if return_fig: return f
 
 
 def plot_filtered_accperstim(title, df, num_days=7, **kwargs):
@@ -234,6 +235,7 @@ def plot_accuracy_bias(subj, df, x_axis='time', smoothing='exponential', trial_l
     plot_line_mask = (plt_correct_line, plt_L_response_line, plt_R_response_line)
 
     for data, smoothed, shaded, line in zip(datas, plot_smoothed_mask, plot_shaded_mask, plot_line_mask):
+
         if shaded:
             plt.fill_between(x, .5, data.values.astype(bool), color='r', alpha=.25)
         if line:
