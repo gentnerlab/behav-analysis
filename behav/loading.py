@@ -139,7 +139,7 @@ def load_data_pandas(subjects, data_folder, force_boolean=['reward']):
                 # except ValueError:
                 #     df = None
         if df_set:
-            behav_data[subj] = pd.concat(df_set).sort()
+            behav_data[subj] = pd.concat(df_set).sort_index()
         else:
             print 'data not found for %s' % (subj)
     if force_boolean:
