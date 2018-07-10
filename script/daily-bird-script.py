@@ -59,7 +59,7 @@ def generate_bird_plots(subjects):
         daily_acc_fig.savefig(figs_list['daily_acc'][-1])
     return figs_list
 
-def send_mail_local(send_from, send_to, subject,address,password,images=None,server='smtp.gmail.com',text='This is the alternative plain text message.'):
+def send_mail_local(send_from, send_to, subject,images=None,server='gmail-smtp-in.l.google.com:25',text='This is the alternative plain text message.'):
     
     msg = MIMEMultipart()
     msg['From'] = send_from
@@ -87,10 +87,9 @@ def send_mail_local(send_from, send_to, subject,address,password,images=None,ser
     msgAlternative.attach(msgText)
     
     try:
-        smtp = smtplib.SMTP(server,587)
-        smtp.ehlo()
-        smtp.starttls()
-        smtp.login(address,password)
+        smtp = smtplib.SMTP("127.0.0.1")
+       # smtp.ehlo('gmail.com')
+        #smtp.starttls()
         smtp.sendmail(send_from, send_to, msg.as_string())
         smtp.close()
         print("Email sent!")
@@ -112,7 +111,6 @@ bird_list = pd.DataFrame([i.split(',') for i in str(data.decode("utf-8") ).split
 bird_list.columns = bird_list.iloc[0]
 bird_list = bird_list[1:]
 My_address= 'chc401@ucsd.edu'
-pwd=
 fig_spot = '/Users/annie1/Downloads/behav-analysis-python3_tim/performance_figs'
 for email_add in list(bird_list.columns.values):
     print(np.array([i for i in bird_list[email_add] if type(i) == str]))
@@ -120,5 +118,5 @@ for email_add in list(bird_list.columns.values):
     send_from = My_address
     send_to = [email_add]
     subject = 'Bird Results'
-    send_mail_local(send_from, send_to, subject, My_address,pwd,np.concatenate([figs_list[i] for i in figs_list])[::-1])
+    send_mail_local(send_from, send_to, subject,np.concatenate([figs_list[i] for i in figs_list])[::-1])
     
