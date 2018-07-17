@@ -87,7 +87,7 @@ def send_mail_local(send_from, send_to, subject,images=None,server='gmail-smtp-i
     msgAlternative.attach(msgText)
     
     try:
-        smtp = smtplib.SMTP("127.0.0.1")
+        smtp = smtplib.SMTP("127.0.0.1:8888")
        # smtp.ehlo('gmail.com')
         #smtp.starttls()
         smtp.sendmail(send_from, send_to, msg.as_string())
