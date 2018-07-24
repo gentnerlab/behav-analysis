@@ -39,11 +39,11 @@ import sys
 sys.path.append( '/Users/annie1/Documents/GitHub/behav-analysis/behav')
 import plotting, utils, loading
 
-def generate_bird_plots(subjects,fig_spot):
+def generate_bird_plots(subjects,fig_spot,data_path_zog):
     behav_data_zog = loading.load_data_pandas(subjects,data_path_zog)
-    behav_data_vogel= loading.load_data_pandas(subjects,data_path_vogel)
+    #behav_data_vogel= loading.load_data_pandas(subjects,data_path_vogel)
     behav_data = behav_data_zog.copy()
-    behav_data.update(behav_data_vogel)
+    #behav_data.update(behav_data_vogel)
     figs_list = {'cal':[], 'acc_bias':[], 'daily_acc':[]}
     for subj,data in behav_data.items():
         pc_fig = plotting.plot_filtered_performance_calendar(subj,data,num_days=20, return_fig=True)
@@ -112,13 +112,15 @@ bird_list.columns = bird_list.iloc[0]
 bird_list = bird_list[1:]
 fig_spot = '/Users/annie1/Documents/GitHub/behav-analysis/performance_figs'
 @click.command()
-@click.option('--email', help='Email sned from')
+@click.option('--email', help='Email sned from',prompt='what is your email')
 @click.option('--fig_spot', prompt='Where do you want to put the temp pic to',
               help='The location to save the pictures')
-def main(email,fig_spot):
+@click.option('--data', prompt='Where is your data located',
+              help='The location of your data')
+def main(email,fig_spot,data):
     for email_add in list(bird_list.columns.values):
         print(np.array([i for i in bird_list[email_add] if type(i) == str]))
-        figs_list = generate_bird_plots(np.array([i for i in bird_list[email_add] if type(i) == str]),fig_spot)
+        figs_list = generate_bird_plots(np.array([i for i in bird_list[email_add] if type(i) == str]),fig_spot,data)
         send_from = email 
         send_to = [email_add]
         subject = 'Bird Results'

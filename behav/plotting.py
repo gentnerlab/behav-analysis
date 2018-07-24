@@ -174,7 +174,7 @@ def plot_ci_accuracy(subj, df, x_axis='time', day_lim=7, trial_lim=None, bias=Tr
                         plt_R_response_smoothed=False, plt_R_response_shade=False, plt_R_response_line=False,
                         plt_ci=True, block_size=100, return_fig = return_fig)
 
-def plot_accuracy_bias(subj, df, x_axis='time', smoothing='exponential', trial_lim=None, day_lim=20,
+def plot_accuracy_bias(subj, df, x_axis='time',smoothing='exponential',trial_lim=None, day_lim=12,
                         plt_correct_smoothed=True, plt_correct_shade=True, plt_correct_line=True,
                         plt_L_response_smoothed=False, plt_L_response_shade=False, plt_L_response_line=False,
                         plt_R_response_smoothed=False, plt_R_response_shade=False, plt_R_response_line=False,
