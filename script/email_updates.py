@@ -2,6 +2,7 @@
 import requests
 import pandas as pd
 import numpy as np
+import click
 
 import smtplib
 from os.path import basename
@@ -31,19 +32,18 @@ import datetime as dt
 #import seaborn as sns
 import scipy.ndimage
 import numpy as np
-data_path_zog = '/Users/annie1/Downloads/behav-analysis-python3_tim/Sample'
-data_path_vogel = '/Users/annie1/Downloads/behav-analysis-python3_tim/Sample'
+data_path_zog = '/Users/annie1/Downloads/behav-analysis-python3_tim/Sample Behave Data'
+data_path_vogel = '/Users/annie1/Downloads/behav-analysis-python3_tim/Sample Behave Data'
 
 import sys
-sys.path.append( '/Users/annie1/Downloads/behav-analysis-python3_tim/behav/')
+sys.path.append( '/Users/annie1/Documents/GitHub/behav-analysis/behav')
 import plotting, utils, loading
 
-def generate_bird_plots(subjects):
+def generate_bird_plots(subjects,fig_spot):
     behav_data_zog = loading.load_data_pandas(subjects,data_path_zog)
     behav_data_vogel= loading.load_data_pandas(subjects,data_path_vogel)
     behav_data = behav_data_zog.copy()
     behav_data.update(behav_data_vogel)
-    fig_spot ='/Users/annie1/Downloads/behav-analysis-python3_tim/performance_figs'
     figs_list = {'cal':[], 'acc_bias':[], 'daily_acc':[]}
     for subj,data in behav_data.items():
         pc_fig = plotting.plot_filtered_performance_calendar(subj,data,num_days=20, return_fig=True)
@@ -110,13 +110,18 @@ data = r.content
 bird_list = pd.DataFrame([i.split(',') for i in str(data.decode("utf-8") ).split('\r\n')])
 bird_list.columns = bird_list.iloc[0]
 bird_list = bird_list[1:]
-My_address= 'chc401@ucsd.edu'
-fig_spot = '/Users/annie1/Downloads/behav-analysis-python3_tim/performance_figs'
-for email_add in list(bird_list.columns.values):
-    print(np.array([i for i in bird_list[email_add] if type(i) == str]))
-    figs_list = generate_bird_plots(np.array([i for i in bird_list[email_add] if type(i) == str]))
-    send_from = My_address
-    send_to = [email_add]
-    subject = 'Bird Results'
-    send_mail_local(send_from, send_to, subject,np.concatenate([figs_list[i] for i in figs_list])[::-1])
-    
+fig_spot = '/Users/annie1/Documents/GitHub/behav-analysis/performance_figs'
+@click.command()
+@click.option('--email', help='Email sned from')
+@click.option('--fig_spot', prompt='Where do you want to put the temp pic to',
+              help='The location to save the pictures')
+def main(email,fig_spot):
+    for email_add in list(bird_list.columns.values):
+        print(np.array([i for i in bird_list[email_add] if type(i) == str]))
+        figs_list = generate_bird_plots(np.array([i for i in bird_list[email_add] if type(i) == str]),fig_spot)
+        send_from = email 
+        send_to = [email_add]
+        subject = 'Bird Results'
+        send_mail_local(send_from, send_to, subject,np.concatenate([figs_list[i] for i in figs_list])[::-1])
+if __name__ == '__main__':
+    main()   

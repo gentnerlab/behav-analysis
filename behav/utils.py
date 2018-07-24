@@ -113,7 +113,7 @@ def filter_normal_trials(df):
     '''
     filters dataframe, df, to only include normal (non-correction) trials that got a response.
     '''
-    return df[(df.response<>'none')&(df.type_=='normal')]
+    return df[(df.response!='none')&(df.type_=='normal')]
 
 def filter_recent_days(df, num_days):
     '''
@@ -126,5 +126,5 @@ def extract_filename(data_to_analyze, target='stim_name', inplace=True):
     if not inplace:
         data_to_analyze = data_to_analyze.copy()
     split_names = data_to_analyze.stimulus.str.split('/', expand=True)
-    data_to_analyze[target] = split_names[split_names.keys().values.max()].str.split('.', expand=True)[0]
+    data_to_analyze[target] = split_names[list(split_names.keys()).values.max()].str.split('.', expand=True)[0]
     return data_to_analyze
