@@ -1,17 +1,7 @@
-
-# Config file for automatic testing at travis-ci.org
-
 language: python
-p
-ython:
+python:
   - "2.7"
-
-# command to install dependencies
-install:
-  - pip install -r requirements.txt
-
 script:
-  - pytest
-
+  - pytest --cov=ephys
 after_success:
   - coveralls

@@ -1,9 +1,11 @@
 import behav
 
-starsTest = []
-for val in [0.0009, 0.009, 0.04, 0.09, 1]:
-	starsTest.append(stars(val))
-assert starsTest == ['***', '**', '*', '.', 'n.s.']
+
+def test_stars():
+    starsTest = []
+    for val in [0.0009, 0.009, 0.04, 0.09, 1]:
+        starsTest.append(behav.utils.stars(val))
+    assert starsTest == ['***', '**', '*', '.', 'n.s.']
 """
 assert binP(3, 0.75, 5, 10) == 
 

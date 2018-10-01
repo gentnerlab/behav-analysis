@@ -1,5 +1,12 @@
+# local package
+-e .
+
+# external requirements
 pandas
 numpy
 matplotlib
 pandas
 scipy
+pytest-ordering
+pytest-cov
+python-coveralls
