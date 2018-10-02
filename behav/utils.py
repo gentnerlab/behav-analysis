@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 import datetime as dt
 
+
 def stars(p):
     '''Converts p-values into R-styled stars.
 
@@ -23,27 +24,29 @@ def stars(p):
     else:
         return 'n.s.'
 
+
 def binP(N, p, x1, x2):
     p = float(p)
-    q = p/(1-p)
+    q = p / (1 - p)
     k = 0.0
     v = 1.0
     s = 0.0
     tot = 0.0
 
-    while(k<=N):
-            tot += v
-            if(k >= x1 and k <= x2):
-                    s += v
-            if(tot > 10**30):
-                    s = s/10**30
-                    tot = tot/10**30
-                    v = v/10**30
-            k += 1
-            v = v*q*(N+1-k)/k
-    return s/tot
+    while(k <= N):
+        tot += v
+        if(k >= x1 and k <= x2):
+            s += v
+        if(tot > 10**30):
+            s = s / 10**30
+            tot = tot / 10**30
+            v = v / 10**30
+        k += 1
+        v = v * q * (N + 1 - k) / k
+    return s / tot
 
-def binomial_ci(x,N,CL=95.0):
+
+def binomial_ci(x, N, CL=95.0):
     '''
     Calculate the exact confidence interval for a binomial proportion
 
@@ -71,61 +74,65 @@ def binomial_ci(x,N,CL=95.0):
     '''
     x = float(x)
     N = float(N)
-    #Set the confidence bounds
-    TU = (100 - float(CL))/2
+    # Set the confidence bounds
+    TU = (100 - float(CL)) / 2
     TL = TU
 
-    P = x/N
-    if (x==0):
+    P = x / N
+    if (x == 0):
         dl = 0.0
     else:
-        v = P/2
+        v = P / 2
         sL = 0
         sH = P
-        p = TL/100
+        p = TL / 100
 
-        while((sH-sL) > 10**-5):
+        while((sH - sL) > 10**-5):
             if(binP(N, v, x, N) > p):
                 sH = v
-                v = (sL+v)/2
+                v = (sL + v) / 2
             else:
                 sL = v
-                v = (v+sH)/2
+                v = (v + sH) / 2
         dl = v
 
-    if (x==N):
+    if (x == N):
         ul = 1.0
     else:
-        v = (1+P)/2
+        v = (1 + P) / 2
         sL = P
         sH = 1
-        p = TU/100
-        while((sH-sL) > 10**-5):
+        p = TU / 100
+        while((sH - sL) > 10**-5):
             if(binP(N, v, 0, x) < p):
                 sH = v
-                v = (sL+v)/2
+                v = (sL + v) / 2
             else:
                 sL = v
-                v = (v+sH)/2
+                v = (v + sH) / 2
         ul = v
     return (dl, ul)
+
 
 def filter_normal_trials(df):
     '''
     filters dataframe, df, to only include normal (non-correction) trials that got a response.
     '''
-    return df[(df.response!='none')&(df.type_=='normal')]
+    return df[(df.response != 'none') & (df.type_ == 'normal')]
+
 
 def filter_recent_days(df, num_days):
     '''
     filters dataframe, df, to only include the most recent num_days of trials
     '''
     today = dt.datetime.now()
-    return df[(today.date()-dt.timedelta(days=num_days)):today]
+    return df[(today.date() - dt.timedelta(days=num_days)):today]
+
 
 def extract_filename(data_to_analyze, target='stim_name', inplace=True):
     if not inplace:
         data_to_analyze = data_to_analyze.copy()
     split_names = data_to_analyze.stimulus.str.split('/', expand=True)
-    data_to_analyze[target] = split_names[list(split_names.keys()).values.max()].str.split('.', expand=True)[0]
+    data_to_analyze[target] = split_names[
+        split_names.keys().values.max()].str.split('.', expand=True)[0]
     return data_to_analyze
