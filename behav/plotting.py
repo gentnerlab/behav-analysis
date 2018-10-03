@@ -1,10 +1,12 @@
+from __future__ import absolute_import
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
-import utils
+from . import utils
 import scipy as sp
 from scipy import ndimage
+from six.moves import zip
 
 def plot_stars(p,x,y,size='large',horizontalalignment='center',**kwargs):
     ''' Plots significance stars '''
@@ -66,7 +68,7 @@ def plot_performance_calendar(subj, data_to_analyze, disp_counts=False, vmins=(0
                         cmap=cmap, cbar=not disp_counts,
                         vmin=vmin, vmax=vmax)
         g.set_title(title)
-    g.set_xticklabels(_date_labels(pivoted.keys().levels[1]));
+    g.set_xticklabels(_date_labels(list(pivoted.keys()).levels[1]));
 
 
 def plot_filtered_accperstim(title,df,num_days=7, **kwargs):
@@ -114,7 +116,7 @@ def plot_accperstim(title, data_to_analyze, stim_ids='stimulus', stims_all=None,
     cmap.set_bad(color = 'k', alpha = 0.5)
     plt.figure()
     g = sns.heatmap(pivoted, vmin=0, vmax=1, cmap=cmap, 
-                    xticklabels=_date_labels(pivoted.keys().values),
+                    xticklabels=_date_labels(list(pivoted.keys()).values),
                     yticklabels=yticklabels)
     g.set_title(title)
 
@@ -257,13 +259,13 @@ def plot_trial_feeds(behav_data, num_days=7):
     ax1 = fig.gca()
     ax2 = ax1.twinx()
 
-    for (subj, df), color in zip(behav_data.items(), colors):
+    for (subj, df), color in zip(list(behav_data.items()), colors):
         data_to_analyze = utils.filter_recent_days(df, num_days).copy()
         if not data_to_analyze.empty:
             data_to_analyze['date'] = data_to_analyze.index.date
             blocked = data_to_analyze.groupby('date')
 
-            days = np.sort(blocked.groups.keys())
+            days = np.sort(list(blocked.groups.keys()))
             trials_per_day = blocked['response'].count().values
             line = ax1.plot(days, trials_per_day, label=subj + ' trials per day', c=color)
             if len(days) == 1:
