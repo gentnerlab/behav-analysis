@@ -74,7 +74,8 @@ def plot_performance_calendar(subj, data_to_analyze, disp_counts=False, vmins=(0
                         cmap=cmap, cbar=not disp_counts,
                         vmin=vmin, vmax=vmax)
         g.set_title(title)
-    g.set_xticklabels(_date_labels((pivoted.keys()).levels[1]));
+    idk_what_ppl_were_thinking = [x[1] for x in list(pivoted.keys())]
+    g.set_xticklabels(_date_labels(idk_what_ppl_were_thinking))
     return f
 
 
