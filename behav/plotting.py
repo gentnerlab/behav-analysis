@@ -222,7 +222,7 @@ def plot_accuracy_bias(subj, df, x_axis='time', smoothing='exponential', trial_l
     else:
         raise Exception('invalid value for x_axis')
 
-    datas = (df['correct'], df['response']=='L', df['response']=='R')
+    datas = (df['correct'].astype(float), df['response']=='L', df['response']=='R')
     plot_smoothed_mask = (plt_correct_smoothed, plt_L_response_smoothed, plt_R_response_smoothed)
     plot_shaded_mask = (plt_correct_shade, plt_L_response_shade, plt_R_response_shade)
     plot_line_mask = (plt_correct_line, plt_L_response_line, plt_R_response_line)
