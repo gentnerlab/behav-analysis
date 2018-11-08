@@ -26,7 +26,8 @@ def plot_filtered_performance_calendar(subj,df,num_days=7, **kwargs):
     '''
     plots a calendar view of the performance for a subject on the past num_days.
     '''
-    plot_performance_calendar(subj, utils.filter_normal_trials(utils.filter_recent_days(df, num_days)), **kwargs)
+    f = plot_performance_calendar(subj, utils.filter_normal_trials(utils.filter_recent_days(df, num_days)), **kwargs)
+    return f
 
 def plot_performance_calendar(subj, data_to_analyze, disp_counts=False, vmins=(0, 0, 0), vmaxs=(None, 1, None)):
     '''
@@ -69,6 +70,7 @@ def plot_performance_calendar(subj, data_to_analyze, disp_counts=False, vmins=(0
                         vmin=vmin, vmax=vmax)
         g.set_title(title)
     g.set_xticklabels(_date_labels(list(pivoted.keys()).levels[1]));
+    return f
 
 
 def plot_filtered_accperstim(title,df,num_days=7, **kwargs):
@@ -139,11 +141,12 @@ def plot_daily_accuracy(subj, df, x_axis='trial_num', smoothing='gaussian', day_
     day_lim : None or non-negative int
         max number of days of trials to include. Zero means just today.
     '''
-    plot_accuracy_bias(subj, df, x_axis=x_axis, smoothing=smoothing, trial_lim=None, day_lim=day_lim, 
+    f = plot_accuracy_bias(subj, df, x_axis=x_axis, smoothing=smoothing, trial_lim=None, day_lim=day_lim, 
                         plt_correct_smoothed=True, plt_correct_shade=True, plt_correct_line=True, 
                         plt_L_response_smoothed=False, plt_L_response_shade=False, plt_L_response_line=False,
                         plt_R_response_smoothed=False, plt_R_response_shade=False, plt_R_response_line=False,
                         plt_ci=False, block_size=100)
+    return f
 
 def plot_ci_accuracy(subj, df, x_axis='time', day_lim=7, trial_lim=None, bias=True):
     '''
@@ -165,7 +168,7 @@ def plot_ci_accuracy(subj, df, x_axis='time', day_lim=7, trial_lim=None, bias=Tr
     bias : boolean
         whether to plot the line for the left bias
     '''
-    plot_accuracy_bias(subj, df, x_axis=x_axis, smoothing='rolling', trial_lim=None, day_lim=day_lim,
+    f = plot_accuracy_bias(subj, df, x_axis=x_axis, smoothing='rolling', trial_lim=None, day_lim=day_lim,
                         plt_correct_smoothed=True, plt_correct_shade=False, plt_correct_line=False, 
                         plt_L_response_smoothed=bias, plt_L_response_shade=False, plt_L_response_line=False,
                         plt_R_response_smoothed=False, plt_R_response_shade=False, plt_R_response_line=False,
@@ -242,6 +245,7 @@ def plot_accuracy_bias(subj, df, x_axis='time', smoothing='exponential', trial_l
     plt.axhline(y=.5, c='black', linestyle='dotted')
     plt.title('Today\'s Performance: '+subj)
     plt.xlabel(x_axis)
+    return fig
 
 def plot_trial_feeds(behav_data, num_days=7):
     '''
@@ -282,3 +286,4 @@ def plot_trial_feeds(behav_data, num_days=7):
         ax.set_ylim(bottom=0)
         ax.legend(loc=loc)
     ax1.set_xticklabels(_date_labels(days))
+    return fig
