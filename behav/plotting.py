@@ -10,12 +10,12 @@ from six.moves import zip
 
 def plot_stars(p, x, y, size='large', horizontalalignment='center', **kwargs):
     ''' Plots significance stars '''
-    plt.text(x, y, stars(p), size=size, horizontalalignment=horizontalalignment, **kwargs)
+    plt.text(x, y, utils.stars(p), size=size, horizontalalignment=horizontalalignment, **kwargs)
 
 
 def plot_linestar(p, x1, x2, y):
     hlines(y, x1, x2)
-    plot_stars(0.5 * (x1 + x2), y + 0.02, stars(p), size='large', horizontalalignment='center')
+    plot_stars(0.5 * (x1 + x2), y + 0.02, utils.stars(p), size='large', horizontalalignment='center')
 
 
 def _date_labels(dates):
