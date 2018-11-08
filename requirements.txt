@@ -7,7 +7,7 @@ numpy
 matplotlib
 pandas
 scipy
-pytest==3.9.3
+pytest>=3.10
 pytest-ordering
 pytest-cov
 python-coveralls
