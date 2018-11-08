@@ -5,6 +5,7 @@ import seaborn as sns
 import pandas as pd
 from . import utils
 import scipy as sp
+from scipy import ndimage
 from six.moves import zip
 
 
@@ -243,7 +244,7 @@ def plot_accuracy_bias(subj, df, x_axis='time', smoothing='exponential', trial_l
             if smoothing == 'exponential':
                 data.ewm(halflife=20).mean().plot(use_index=use_index)
             elif smoothing == 'gaussian':
-                plt.plot(x, sp.ndimage.filters.gaussian_filter(
+                plt.plot(x, ndimage.filters.gaussian_filter(
                     data.values.astype('float32'), 3, order=0))
             elif smoothing == 'rolling':
                 data.rolling(window=block_size, center=True).mean().plot(use_index=use_index)
