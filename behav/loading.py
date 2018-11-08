@@ -2,8 +2,10 @@ from __future__ import absolute_import
 from __future__ import print_function
 import glob
 import pandas as pd
+import numpy as np
 import datetime as dt
 import os
+import warnings
 from six.moves import range
 
 def load_data_pandas(subjects, data_folder, force_boolean=['reward']):
@@ -44,7 +46,7 @@ def load_data_pandas(subjects, data_folder, force_boolean=['reward']):
 
         # if ndege/c operant
         data_files = glob.glob(os.path.join(data_folder,subj,subj[1:]+'_match2sample*.2ac_rDAT'))
-        if data_files:  
+        if data_files:
             fmt = [('session','i4'),
                    ('trial_number','i4'),
                    ('old_type','b'),
@@ -76,7 +78,7 @@ def load_data_pandas(subjects, data_folder, force_boolean=['reward']):
 
         # if ndege/c GONOGO operant
         data_files = glob.glob(os.path.join(data_folder,subj,subj[1:]+'*.gonogo_rDAT'))
-        if data_files:  
+        if data_files:
             fmt = [('session','i4'),
                    ('trial_number','i4'),
                    ('old_type','b'),
@@ -105,10 +107,10 @@ def load_data_pandas(subjects, data_folder, force_boolean=['reward']):
                 df['class_'] = df['old_class'].map(lambda x: ['none', 'GO', 'NOGO'][x])
                 df['data_file'] = data_f
                 df_set.append(df)
-                        
+
         # if AllTrials file from probe-the-broab
         data_files = glob.glob(os.path.join(data_folder,subj,subj+'.AllTrials'))
-        if data_files: 
+        if data_files:
             col_map = {'StimName': 'stimulus',
                        'Epoch': 'session',
                        'StimulusFile': 'block_name',
@@ -142,6 +144,24 @@ def load_data_pandas(subjects, data_folder, force_boolean=['reward']):
                 # except ValueError:
                 #     df = None
         if df_set:
+            #return df_set
+            # sort out non-timestamp indexes
+            def _validate_time(date_text, date_format = "%Y-%m-%d %H:%M:%S.%f"):
+                """ Remove any invalid datetime index"""
+                try:
+                    return dt.datetime.strptime(date_text, date_format)
+                except:
+                    return False
+            # test for dfs where the index is not datetime
+            broken_dfs = np.where([(type(i.index) != pd.core.indexes.datetimes.DatetimeIndex) &(len(i)>0) for i in df_set])[0]
+
+            if len(broken_dfs)> 0:
+                warnings.warn('Warning: ' + str(len(broken_dfs))+' Pandas dataframe contained non-datetime indexes')
+                for broken_df in broken_dfs:
+                    df_set[broken_df].index = [_validate_time(i,"%Y-%m-%d %H:%M:%S.%f") for i in df_set[broken_df].index]
+                    df_set[broken_df] = df_set[broken_df][df_set[broken_df].index != False]
+                    df_set[broken_df].index = pd.to_datetime(df_set[broken_df].index)
+
             behav_data[subj] = pd.concat(df_set).sort_index()
         else:
             print('data not found for %s' % (subj))
@@ -162,4 +182,3 @@ def _read_year_rDAT(rDat_f, nheaderrows):
         head = [next(f) for x in range(nheaderrows)]
     date_line = [x for x in head if 'Start time' in x]
     return int(date_line[0][-5:-1])
-
