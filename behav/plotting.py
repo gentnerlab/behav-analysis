@@ -26,7 +26,8 @@ def plot_filtered_performance_calendar(subj,df,num_days=7, **kwargs):
     '''
     plots a calendar view of the performance for a subject on the past num_days.
     '''
-    f = plot_performance_calendar(subj, utils.filter_normal_trials(utils.filter_recent_days(df, num_days)), **kwargs)
+    df2 = utils.filter_normal_trials(utils.filter_recent_days(df, num_days))
+    f = plot_performance_calendar(subj, df2, **kwargs)
     return f
 
 def plot_performance_calendar(subj, data_to_analyze, disp_counts=False, vmins=(0, 0, 0), vmaxs=(None, 1, None)):
@@ -69,7 +70,8 @@ def plot_performance_calendar(subj, data_to_analyze, disp_counts=False, vmins=(0
                         cmap=cmap, cbar=not disp_counts,
                         vmin=vmin, vmax=vmax)
         g.set_title(title)
-    g.set_xticklabels(_date_labels(list(pivoted.keys()).levels[1]));
+    idk_what_ppl_were_thinking = [x[1] for x in list(pivoted.keys())]
+    g.set_xticklabels(_date_labels(idk_what_ppl_were_thinking));
     return f
 
 
@@ -173,6 +175,7 @@ def plot_ci_accuracy(subj, df, x_axis='time', day_lim=7, trial_lim=None, bias=Tr
                         plt_L_response_smoothed=bias, plt_L_response_shade=False, plt_L_response_line=False,
                         plt_R_response_smoothed=False, plt_R_response_shade=False, plt_R_response_line=False,
                         plt_ci=True, block_size=100)
+    return f
 
 def plot_accuracy_bias(subj, df, x_axis='time', smoothing='exponential', trial_lim=None, day_lim=7, 
                         plt_correct_smoothed=True, plt_correct_shade=True, plt_correct_line=True, 
@@ -218,7 +221,7 @@ def plot_accuracy_bias(subj, df, x_axis='time', smoothing='exponential', trial_l
         use_index=False
     else:
         raise Exception('invalid value for x_axis')
-    
+
     datas = (df['correct'], df['response']=='L', df['response']=='R')
     plot_smoothed_mask = (plt_correct_smoothed, plt_L_response_smoothed, plt_R_response_smoothed)
     plot_shaded_mask = (plt_correct_shade, plt_L_response_shade, plt_R_response_shade)
