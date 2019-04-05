@@ -185,12 +185,3 @@ def _read_year_rDAT(rDat_f, nheaderrows):
         head = [next(f) for x in range(nheaderrows)]
     date_line = [x for x in head if 'Start time' in x]
     return int(date_line[0][-5:-1])
-
-
-def _leftright_to_LR(data):
-    """ converts the response column 'left' to 'L' and 'right' to 'R'
-    to remain consistent with older versions of pyoperant
-    """
-    data.loc[data['response'].values == 'left', 'response'] = 'L'
-    data.loc[data['response'].values == 'right', 'response'] = 'R'
-    return data
