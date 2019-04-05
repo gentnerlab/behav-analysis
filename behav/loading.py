@@ -162,10 +162,8 @@ def load_data_pandas(subjects, data_folder, force_boolean=['reward']):
                     df_set[broken_df].index = [_validate_time(i,"%Y-%m-%d %H:%M:%S.%f") for i in df_set[broken_df].index]
                     df_set[broken_df] = df_set[broken_df][df_set[broken_df].index != False]
                     df_set[broken_df].index = pd.to_datetime(df_set[broken_df].index)
-            
-            # concatenate data and remap response left/right to L/R
-            df = pd.concat(df_set).sort_index()['response'].map({'left':'L', 'right':'R'})
-            behav_data[subj] = df
+    
+            behav_data[subj] = _leftright_to_LR(pd.concat(df_set).sort_index())
         else:
             print('data not found for %s' % (subj))
     if force_boolean:
@@ -185,3 +183,12 @@ def _read_year_rDAT(rDat_f, nheaderrows):
         head = [next(f) for x in range(nheaderrows)]
     date_line = [x for x in head if 'Start time' in x]
     return int(date_line[0][-5:-1])
+
+
+def _leftright_to_LR(data):
+    """ converts the response column 'left' to 'L' and 'right' to 'R'
+    to remain consistent with older versions of pyoperant
+    """
+    data.loc[data['response'].values == 'left', 'response'] = 'L'
+    data.loc[data['response'].values == 'right', 'response'] = 'R'
+    return data
