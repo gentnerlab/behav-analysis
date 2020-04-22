@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
-import utils
+import behav.utils as utils
 import scipy as sp
 from scipy import ndimage
 

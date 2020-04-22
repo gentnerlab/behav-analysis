@@ -113,7 +113,7 @@ def filter_normal_trials(df):
     '''
     filters dataframe, df, to only include normal (non-correction) trials that got a response.
     '''
-    return df[(df.response<>'none')&(df.type_=='normal')]
+    return df[(df.response!='none')&(df.type_=='normal')]
 
 def filter_recent_days(df, num_days):
     '''

@@ -63,11 +63,11 @@ def load_data_pandas(subjects, data_folder, force_boolean=['reward']):
                 dt_maker = _make_dt_maker(year)
                 df['date'] = df.apply(dt_maker, axis=1)
                 df.set_index('date', inplace=True)
-                df['type_'] = df['old_type'].map(lambda(x): ['correction','normal'][x])
-                df['response'] = df['old_response'].map(lambda(x): ['none', 'L', 'R'][x])
-                df['correct'] = df['old_correct'].map(lambda(x): [False, True, float('nan')][x])
-                df['reward'] = df.apply(lambda(x): x['reinforcement'] == 1 and x['correct'] == True, axis=1)
-                df['class_'] = df['old_class'].map(lambda(x): ['none', 'L', 'R'][x])
+                df['type_'] = df['old_type'].map(lambda x: ['correction','normal'][x])
+                df['response'] = df['old_response'].map(lambda x: ['none', 'L', 'R'][x])
+                df['correct'] = df['old_correct'].map(lambda x: [False, True, float('nan')][x])
+                df['reward'] = df.apply(lambda x: x['reinforcement'] == 1 and x['correct'] == True, axis=1)
+                df['class_'] = df['old_class'].map(lambda x: ['none', 'L', 'R'][x])
                 df['data_file'] = data_f
                 df_set.append(df)
 
@@ -95,11 +95,11 @@ def load_data_pandas(subjects, data_folder, force_boolean=['reward']):
                 dt_maker = _make_dt_maker(year)
                 df['date'] = df.apply(dt_maker, axis=1)
                 df.set_index('date', inplace=True)
-                df['type_'] = df['old_type'].map(lambda(x): ['correction','normal'][x])
-                df['response'] = df['old_response'].map(lambda(x): ['none', 'C'][x])
-                df['correct'] = df['old_correct'].map(lambda(x): [False, True, float('nan')][x])
-                df['reward'] = df.apply(lambda(x): x['reinforcement'] == 1 and x['correct'] == True, axis=1)
-                df['class_'] = df['old_class'].map(lambda(x): ['none', 'GO', 'NOGO'][x])
+                df['type_'] = df['old_type'].map(lambda x: ['correction','normal'][x])
+                df['response'] = df['old_response'].map(lambda x: ['none', 'C'][x])
+                df['correct'] = df['old_correct'].map(lambda x: [False, True, float('nan')][x])
+                df['reward'] = df.apply(lambda x: x['reinforcement'] == 1 and x['correct'] == True, axis=1)
+                df['class_'] = df['old_class'].map(lambda x: ['none', 'GO', 'NOGO'][x])
                 df['data_file'] = data_f
                 df_set.append(df)
                         
@@ -122,12 +122,12 @@ def load_data_pandas(subjects, data_folder, force_boolean=['reward']):
                                  )
                 df.rename(columns=col_map, inplace=True)
                 df.set_index('date',inplace=True)
-                df['type_'] = df['Correction'].map(lambda(x): {0:'normal',1:'correction',243:'error',-1:None}[x])
-                df['correct'] = df['ResponseAccuracy'].map(lambda(x): [False, True, float('nan')][x])
-                df['reward'] = df.apply(lambda(x): x['Reinforced'] == 1 and x['correct'] == True, axis=1)
-                df['punish'] = df.apply(lambda(x): x['Reinforced'] == 1 and x['correct'] == False, axis=1)
-                df['class_'] = df['StimClass'].map(lambda(x): {0:'none',1:'L',2:'R',243:'error',-1:None}[x])
-                df['response'] = df['ResponseSelection'].map(lambda(x): ['none', 'L', 'R'][x])
+                df['type_'] = df['Correction'].map(lambda x: {0:'normal',1:'correction',243:'error',-1:None}[x])
+                df['correct'] = df['ResponseAccuracy'].map(lambda x: [False, True, float('nan')][x])
+                df['reward'] = df.apply(lambda x: x['Reinforced'] == 1 and x['correct'] == True, axis=1)
+                df['punish'] = df.apply(lambda x: x['Reinforced'] == 1 and x['correct'] == False, axis=1)
+                df['class_'] = df['StimClass'].map(lambda x: {0:'none',1:'L',2:'R',243:'error',-1:None}[x])
+                df['response'] = df['ResponseSelection'].map(lambda x: ['none', 'L', 'R'][x])
                 df['data_file'] = data_f
 
                 is_behave = df['BehavioralRecording'] > 0
@@ -141,12 +141,12 @@ def load_data_pandas(subjects, data_folder, force_boolean=['reward']):
         if df_set:
             behav_data[subj] = pd.concat(df_set).sort_index()
         else:
-            print 'data not found for %s' % (subj)
+            print("data not found for %s" % (subj))
     if force_boolean:
         for subj in subjects:
             if subj in behav_data:
                 for forced in force_boolean:
-                    behav_data[subj][forced] = behav_data[subj][forced].map(lambda(x): x in [True, 'True', 'true', 1, '1'])
+                    behav_data[subj][forced] = behav_data[subj][forced].map(lambda x: x in [True, 'True', 'true', 1, '1'])
     return behav_data
 
 def _make_dt_maker(year):
