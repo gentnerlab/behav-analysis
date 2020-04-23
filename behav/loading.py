@@ -162,8 +162,9 @@ def load_data_pandas(subjects, data_folder, force_boolean=['reward']):
                     df_set[broken_df].index = [_validate_time(i,"%Y-%m-%d %H:%M:%S.%f") for i in df_set[broken_df].index]
                     df_set[broken_df] = df_set[broken_df][df_set[broken_df].index != False]
                     df_set[broken_df].index = pd.to_datetime(df_set[broken_df].index)
-    
-            behav_data[subj] = _leftright_to_LR(pd.concat(df_set).sort_index())
+                    
+            behav_data[subj] = pd.concat(df_set).sort_index()
+            #behav_data[subj] = _leftright_to_LR(pd.concat(df_set).sort_index())
         else:
             print('data not found for %s' % (subj))
     if force_boolean:
