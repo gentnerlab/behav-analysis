@@ -146,7 +146,7 @@ def plot_daily_accuracy(subj, df, x_axis='trial_num', smoothing='gaussian', day_
     x_axis : str
         whether to plot 'time' or 'trial_num' along the x axis
     smoothing : str
-        whether to smooth using 'exponential', 'rolling' average, 
+        whether to smooth using 'exponential', 'rolling' average,
         'gaussian' filter'
     day_lim : None or non-negative int
         max number of days of trials to include. Zero means just today.
@@ -202,7 +202,7 @@ def plot_accuracy_bias(subj, df, x_axis='time', smoothing='exponential', trial_l
     x_axis : str
         whether to plot 'time' or 'trial_num' along the x axis
     smoothing : str
-        whether to smooth using 'exponential', 'rolling' average, 
+        whether to smooth using 'exponential', 'rolling' average,
         'gaussian' filter'
     trial_lim : None or int
         max number of most recent trials to include
@@ -229,13 +229,18 @@ def plot_accuracy_bias(subj, df, x_axis='time', smoothing='exponential', trial_l
         use_index = False
     else:
         raise Exception('invalid value for x_axis')
+<<<<<<< HEAD
 
     datas = (df['correct'].astype(float), df['response'].isin(['L','left']), df['response'].isin(['R','right']))
+=======
+    datas = (df['correct'].astype(float), df['response'] == 'L', df['response'] == 'R')
+>>>>>>> f34b28b3587a2ac1f5de385356ae63a2cc992220
     plot_smoothed_mask = (plt_correct_smoothed, plt_L_response_smoothed, plt_R_response_smoothed)
     plot_shaded_mask = (plt_correct_shade, plt_L_response_shade, plt_R_response_shade)
     plot_line_mask = (plt_correct_line, plt_L_response_line, plt_R_response_line)
 
     for data, smoothed, shaded, line in zip(datas, plot_smoothed_mask, plot_shaded_mask, plot_line_mask):
+
         if shaded:
             plt.fill_between(x, .5, data.values.astype(bool), color='r', alpha=.25)
         if line:
