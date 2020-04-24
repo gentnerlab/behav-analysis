@@ -145,10 +145,11 @@ def load_data_pandas(subjects, data_folder, force_boolean=['reward']):
                 # except ValueError:
                 #     df = None
         if df_set:
+            """
             #return df_set
             # sort out non-timestamp indexes
             def _validate_time(date_text, date_format = "%Y-%m-%d %H:%M:%S.%f"):
-                """ Remove any invalid datetime index"""
+                #Remove any invalid datetime index
                 try:
                     return dt.datetime.strptime(date_text, date_format)
                 except:
@@ -162,7 +163,7 @@ def load_data_pandas(subjects, data_folder, force_boolean=['reward']):
                     df_set[broken_df].index = [_validate_time(i,"%Y-%m-%d %H:%M:%S.%f") for i in df_set[broken_df].index]
                     df_set[broken_df] = df_set[broken_df][df_set[broken_df].index != False]
                     df_set[broken_df].index = pd.to_datetime(df_set[broken_df].index)
-                    
+            """        
             behav_data[subj] = pd.concat(df_set).sort_index()
             #behav_data[subj] = _leftright_to_LR(pd.concat(df_set).sort_index())
         else:
