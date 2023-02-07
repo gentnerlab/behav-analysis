@@ -125,7 +125,7 @@ def plot_accperstim(title, data_to_analyze, stim_ids='stimulus', stims_all=None,
     cmap.set_bad(color='k', alpha=0.5)
     plt.figure()
     g = sns.heatmap(pivoted, vmin=0, vmax=1, cmap=cmap,
-                    xticklabels=_date_labels(list(pivoted.keys().values).values))
+                    xticklabels=_date_labels(list(pivoted.keys().values)))
     g.set_title(title)
     return g
 
