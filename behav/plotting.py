@@ -74,8 +74,8 @@ def plot_performance_calendar(subj, data_to_analyze, disp_counts=False, vmins=(0
                         cmap=cmap, cbar=not disp_counts,
                         vmin=vmin, vmax=vmax)
         g.set_title(title)
-    idk_what_ppl_were_thinking = [x[1] for x in list(pivoted.keys())]
-    g.set_xticklabels(_date_labels(idk_what_ppl_were_thinking))
+        dates = list(pivoted[column].keys())
+        g.set_xticklabels(_date_labels(dates))
     return f
 
 
@@ -118,16 +118,14 @@ def plot_accperstim(title, data_to_analyze, stim_ids='stimulus', stims_all=None,
     if stims_all:
         yticklabels = stims_all
     elif len(pivoted) < label_count_cutoff:
-        yticklabels = data_to_analyze.groupby(
-            ['class_', stim_ids]).index.unique().index.get_level_values(stim_ids).values
+        yticklabels = list(pivoted.index)
     else:
         yticklabels = int(len(pivoted) / label_count_cutoff)
     cmap = sns.diverging_palette(15, 250, as_cmap=True)
     cmap.set_bad(color='k', alpha=0.5)
     plt.figure()
     g = sns.heatmap(pivoted, vmin=0, vmax=1, cmap=cmap,
-                    xticklabels=_date_labels(list(pivoted.keys()).values),
-                    yticklabels=yticklabels)
+                    xticklabels=_date_labels(list(pivoted.keys().values)))
     g.set_title(title)
     return g
 

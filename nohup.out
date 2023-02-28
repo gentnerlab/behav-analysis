@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/AD/j8xing/.local/bin/jupyter", line 11, in <module>
+    sys.exit(main())
+  File "/home/AD/j8xing/.local/lib/python2.7/site-packages/jupyter_core/command.py", line 247, in main
+    command = _jupyter_abspath(subcommand)
+  File "/home/AD/j8xing/.local/lib/python2.7/site-packages/jupyter_core/command.py", line 134, in _jupyter_abspath
+    'Jupyter command `{}` not found.'.format(jupyter_subcommand)
+Exception: Jupyter command `jupyter-notebook` not found.
