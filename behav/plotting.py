@@ -67,7 +67,7 @@ def plot_performance_calendar(subj, data_to_analyze, disp_counts=False, vmins=(0
     for cmap in cmaps:
         cmap.set_bad(color='Grey')
 
-    pivoted = aggregated.pivot('hour', 'date')
+    pivoted = aggregated.pivot(index='hour', columns='date')
 
     for i, (column, title, cmap, vmin, vmax) in enumerate(zip(columns, titles, cmaps, vmins, vmaxs)):
         g = sns.heatmap(pivoted[column], annot=disp_counts, ax=ax[i],
@@ -114,7 +114,7 @@ def plot_accperstim(title, data_to_analyze, stim_ids='stimulus', stims_all=None,
     blocked = data_to_analyze.groupby(['date', stim_ids])
     aggregated = pd.DataFrame(blocked.agg(
         {'correct': lambda x: np.mean(x.astype(float))}).to_records())
-    pivoted = aggregated.pivot(stim_ids, 'date', 'correct')
+    pivoted = aggregated.pivot(index=stim_ids, columns='date', values='correct')
     if stims_all:
         yticklabels = stims_all
     elif len(pivoted) < label_count_cutoff:
