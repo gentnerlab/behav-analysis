@@ -86,7 +86,7 @@ def plot_filtered_accperstim(title, df, num_days=7, **kwargs):
     return plot_accperstim(title, utils.filter_normal_trials(utils.filter_recent_days(df, num_days)), **kwargs)
 
 
-def plot_accperstim(title, data_to_analyze, stim_ids='stimulus', stims_all=None, label_count_cutoff=50, extract_stim_names=True):
+def plot_accperstim(title, data_to_analyze, stim_ids='stimulus', stims_all=None, label_count_cutoff=50, extract_stim_names=True, figsize=None):
     '''
     percent correct broken out by stimulus and day.
 
@@ -104,6 +104,8 @@ def plot_accperstim(title, data_to_analyze, stim_ids='stimulus', stims_all=None,
         max number of stimuli labels. If below this value will sort stim_ids by class.
     extract_stim_names : boolean
         whether to extract stimuli names from full stimuli paths. If true, ignores stim_ids.
+    figsize : None or (float, float)
+        passed through to plt.figure(); None uses matplotlib's default.
     '''
     data_to_analyze = data_to_analyze.copy()
     if extract_stim_names:
@@ -123,9 +125,10 @@ def plot_accperstim(title, data_to_analyze, stim_ids='stimulus', stims_all=None,
         yticklabels = int(len(pivoted) / label_count_cutoff)
     cmap = sns.diverging_palette(15, 250, as_cmap=True)
     cmap.set_bad(color='k', alpha=0.5)
-    plt.figure()
+    plt.figure(figsize=figsize)
     g = sns.heatmap(pivoted, vmin=0, vmax=1, cmap=cmap,
-                    xticklabels=_date_labels(list(pivoted.keys().values)))
+                    xticklabels=_date_labels(list(pivoted.keys().values)),
+                    yticklabels=yticklabels)
     g.set_title(title)
     return g
 
